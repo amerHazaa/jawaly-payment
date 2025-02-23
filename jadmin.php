@@ -3,10 +3,19 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 
+// Ensure the function is declared only once
+if ( ! function_exists('loginAndAuthenticate') ) {
+    function loginAndAuthenticate() {
+        // Your authentication logic here
+    }
+}
+
+add_action('wp_loaded', 'loginAndAuthenticate', 10);
+
 function jawali_payment_gateway_admin_menu() {
     add_menu_page(
-        __( 'Jawali Payment Gateway', 'jawali-payment-gateway' ),
-        __( 'Jawali Payment', 'jawali-payment-gateway' ),
+        'Jawali Payment Gateway',
+        'Jawali Payment',
         'manage_options',
         'jawali-payment-gateway',
         'jawali_payment_gateway_admin_page',
@@ -18,57 +27,57 @@ add_action( 'admin_menu', 'jawali_payment_gateway_admin_menu' );
 function jawali_payment_gateway_admin_page() {
     ?>
     <div class="wrap">
-        <h1><?php _e( 'Jawali Payment Gateway', 'jawali-payment-gateway' ); ?></h1>
+        <h1>Jawali Payment Gateway</h1>
         <form method="post" action="options.php">
             <?php settings_fields( 'jawali_payment_gateway_settings' ); ?>
             <?php do_settings_sections( 'jawali_payment_gateway_settings' ); ?>
             <table class="form-table">
                 <tr valign="top">
-                    <th scope="row"><?php _e( 'Client ID', 'jawali-payment-gateway' ); ?></th>
+                    <th scope="row">Client ID</th>
                     <td><input type="text" name="jawali_client_id" value="<?php echo esc_attr( get_option('jawali_client_id') ); ?>" /></td>
                 </tr>
                 <tr valign="top">
-                    <th scope="row"><?php _e( 'Client Secret', 'jawali-payment-gateway' ); ?></th>
+                    <th scope="row">Client Secret</th>
                     <td><input type="password" name="jawali_client_secret" value="<?php echo esc_attr( get_option('jawali_client_secret') ); ?>" /></td>
                 </tr>
                 <tr valign="top">
-                    <th scope="row"><?php _e( 'Login URL', 'jawali-payment-gateway' ); ?></th>
+                    <th scope="row">Login URL</th>
                     <td><input type="text" name="jawali_login_url" value="<?php echo esc_attr( get_option('jawali_login_url', 'https://app.wecash.com.ye:8493/paygate/oauth/token') ); ?>" /></td>
                 </tr>
                 <tr valign="top">
-                    <th scope="row"><?php _e( 'Other URL', 'jawali-payment-gateway' ); ?></th>
+                    <th scope="row">Other URL</th>
                     <td><input type="text" name="jawali_other_url" value="<?php echo esc_attr( get_option('jawali_other_url', 'https://app.wecash.com.ye:8493/paygate/v1/ws/callWS') ); ?>" /></td>
                 </tr>
             </table>
             <?php submit_button(); ?>
         </form>
-        <h2><?php _e( 'Login', 'jawali-payment-gateway' ); ?></h2>
+        <h2>Login</h2>
         <form id="jawali-login-form">
             <table class="form-table">
                 <tr valign="top">
-                    <th scope="row"><?php _e( 'Username', 'jawali-payment-gateway' ); ?></th>
+                    <th scope="row">Username</th>
                     <td><input type="text" id="jawali_username" value="gold.time.b" /></td>
                 </tr>
                 <tr valign="top">
-                    <th scope="row"><?php _e( 'Password', 'jawali-payment-gateway' ); ?></th>
+                    <th scope="row">Password</th>
                     <td><input type="password" id="jawali_password" value="Gold@t1me" /></td>
                 </tr>
             </table>
-            <button type="button" id="jawali-login-button"><?php _e( 'Login', 'jawali-payment-gateway' ); ?></button>
+            <button type="button" id="jawali-login-button">Login</button>
         </form>
-        <h2><?php _e( 'Wallet Authentication', 'jawali-payment-gateway' ); ?></h2>
+        <h2>Wallet Authentication</h2>
         <form id="jawali-wallet-auth-form">
             <table class="form-table">
                 <tr valign="top">
-                    <th scope="row"><?php _e( 'Wallet ID', 'jawali-payment-gateway' ); ?></th>
+                    <th scope="row">Wallet ID</th>
                     <td><input type="text" id="jawali_wallet_id" value="5186" /></td>
                 </tr>
                 <tr valign="top">
-                    <th scope="row"><?php _e( 'Wallet Password', 'jawali-payment-gateway' ); ?></th>
+                    <th scope="row">Wallet Password</th>
                     <td><input type="password" id="jawali_wallet_password" value="81771188" /></td>
                 </tr>
             </table>
-            <button type="button" id="jawali-wallet-auth-button"><?php _e( 'Authenticate', 'jawali-payment-gateway' ); ?></button>
+            <button type="button" id="jawali-wallet-auth-button">Authenticate</button>
         </form>
     </div>
     <script>
@@ -87,7 +96,7 @@ function jawali_payment_gateway_admin_page() {
                     },
                     success: function(response) {
                         if (response.success) {
-                            alert('<?php _e( 'Login successful', 'jawali-payment-gateway' ); ?>\nToken: ' + response.data.login_token);
+                            alert('Login successful\nToken: ' + response.data.login_token);
                             $.ajax({
                                 url: ajaxurl,
                                 type: 'POST',
@@ -98,13 +107,13 @@ function jawali_payment_gateway_admin_page() {
                                 },
                                 success: function(response) {
                                     if (response.success) {
-                                        alert('<?php _e( 'Wallet authentication successful', 'jawali-payment-gateway' ); ?>\nToken: ' + response.data.access_token);
+                                        alert('Wallet authentication successful\nToken: ' + response.data.access_token);
                                     } else {
                                         alert(response.data);
                                     }
                                 },
                                 error: function(response) {
-                                    alert('<?php _e( 'Wallet authentication failed', 'jawali-payment-gateway' ); ?>');
+                                    alert('Wallet authentication failed');
                                 }
                             });
                         } else {
@@ -112,7 +121,7 @@ function jawali_payment_gateway_admin_page() {
                         }
                     },
                     error: function(response) {
-                        alert('<?php _e( 'Login failed', 'jawali-payment-gateway' ); ?>');
+                        alert('Login failed');
                     }
                 });
             }
@@ -150,19 +159,29 @@ function jawali_login() {
             'password'      => $password,
             'scope'         => 'read',
         )),
-        'timeout'   => 15, // زيادة المهلة إلى 15 ثانية
+        'timeout'   => 15,
     ));
 
-    if ( is_wp_error( $response ) ) {
-        wp_send_json_error( $response->get_error_message() );
+    if (is_wp_error($response)) {
+        $error_message = 'Jawali Login Error: ' . $response->get_error_message();
+        error_log($error_message); // تسجيل الخطأ في سجلات الخادم
+        wp_send_json_error(array(
+            'message' => 'Login failed. Please check your credentials and try again.',
+            'debug' => $error_message // إرسال تفاصيل الخطأ للتصحيح (للاستخدام في البيئة التطويرية فقط)
+        ));
     } else {
-        $body = wp_remote_retrieve_body( $response );
-        $data = json_decode( $body, true );
-        if ( isset( $data['access_token'] ) ) {
-            update_option( 'jawali_login_token', $data['access_token'] );
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode($body, true);
+        if (isset($data['access_token'])) {
+            update_option('jawali_login_token', $data['access_token']);
             wp_send_json_success(array('login_token' => $data['access_token']));
         } else {
-            wp_send_json_error( $data['error_description'] ?? 'Unknown error' );
+            $error_message = 'Jawali API Error: ' . ($data['error_description'] ?? 'Unknown error');
+            error_log($error_message); // تسجيل الخطأ في سجلات الخادم
+            wp_send_json_error(array(
+                'message' => 'Login failed. Please check your credentials and try again.',
+                'debug' => $error_message // إرسال تفاصيل الخطأ للتصحيح (للاستخدام في البيئة التطويرية فقط)
+            ));
         }
     }
 }
@@ -207,20 +226,31 @@ function jawali_wallet_auth() {
                 'password'   => $wallet_password,
             ),
         )),
-        'timeout'   => 15, // زيادة المهلة إلى 15 ثانية
+        'timeout'   => 15,
     ));
 
-    if ( is_wp_error( $response ) ) {
-        wp_send_json_error( $response->get_error_message() );
+    if (is_wp_error($response)) {
+        $error_message = 'Jawali Wallet Auth Error: ' . $response->get_error_message();
+        error_log($error_message); // تسجيل الخطأ في سجلات الخادم
+        wp_send_json_error(array(
+            'message' => 'Wallet authentication failed. Please try again.',
+            'debug' => $error_message // إرسال تفاصيل الخطأ للتصحيح (للاستخدام في البيئة التطويرية فقط)
+        ));
     } else {
-        $body = wp_remote_retrieve_body( $response );
-        $data = json_decode( $body, true );
-        if ( isset( $data['responseBody']['access_token'] ) ) {
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode($body, true);
+        if (isset($data['responseBody']['access_token'])) {
             set_transient( 'jawali_access_token', $data['responseBody']['access_token'], HOUR_IN_SECONDS );
             wp_send_json_success(array('access_token' => $data['responseBody']['access_token']));
         } else {
-            wp_send_json_error( $data['responseBody']['message'] ?? 'Unknown error' );
+            $error_message = 'Jawali API Error: ' . ($data['responseBody']['message'] ?? 'Unknown error');
+            error_log($error_message); // تسجيل الخطأ في سجلات الخادم
+            wp_send_json_error(array(
+                'message' => 'Wallet authentication failed. Please try again.',
+                'debug' => $error_message // إرسال تفاصيل الخطأ للتصحيح (للاستخدام في البيئة التطويرية فقط)
+            ));
         }
     }
 }
 add_action( 'wp_ajax_jawali_wallet_auth', 'jawali_wallet_auth' );
+?>

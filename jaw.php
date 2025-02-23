@@ -2,7 +2,7 @@
 /*
 Plugin Name: Jawali Payment Gateway
 Description: Allows payments with Jawali Payment Gateway.
-Version: 1.0
+Version: 1.2.2
 Author: amerHazaa
 */
 
@@ -19,10 +19,10 @@ function init_jawali_gateway() {
     }
 
     // Include the functions file
-    include_once( plugin_dir_path( __FILE__ ) . 'jawali-functions.php' );
+    include_once( plugin_dir_path( __FILE__ ) . 'jawfunc.php' );
 
     // Include the main class file
-    include_once( plugin_dir_path( __FILE__ ) . 'class-wc-gateway-jawali.php' );
+    include_once( plugin_dir_path( __FILE__ ) . 'jawclss.php' );
 
     // Add the gateway to WooCommerce
     function add_jawali_gateway_class( $methods ) {
@@ -35,7 +35,6 @@ function init_jawali_gateway() {
 
 // Include the admin page
 if ( is_admin() ) {
-    include_once( plugin_dir_path( __FILE__ ) . 'admin-page.php' );
+    include_once( plugin_dir_path( __FILE__ ) . 'jadmin.php' );
 }
-
 ?>
